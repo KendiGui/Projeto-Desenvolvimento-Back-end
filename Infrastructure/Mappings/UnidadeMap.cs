@@ -11,7 +11,6 @@ namespace Infrastructure.Mappings
             builder.ToTable(nameof(Unidade));
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).UseIdentityColumn();
-            builder.Ignore(x => x.guid);
 
             builder.Property(u => u.Nome).IsRequired();
             builder.Property(u => u.Cidade).IsRequired();
@@ -20,21 +19,6 @@ namespace Infrastructure.Mappings
             builder.Property(u => u.Ativa).HasDefaultValue(true);
             builder.Property(u => u.CreatedAt);
             builder.Property(u => u.LastUpdatedAt);
-
-            builder.HasMany<UnidadeProduto>()
-                   .WithOne(up => up.Unidade)
-                   .HasForeignKey(up => up.UnidadeId)
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany<Estoque>()
-                   .WithOne(e => e.Unidade)
-                   .HasForeignKey(e => e.UnidadeId)
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany<Pedido>()
-                   .WithOne(p => p.Unidade)
-                   .HasForeignKey(p => p.UnidadeId)
-                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

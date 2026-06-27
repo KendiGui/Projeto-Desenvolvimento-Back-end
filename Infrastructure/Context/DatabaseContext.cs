@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Infrastructure.DatabaseContext
+namespace Infrastructure.Context
 {
     public class DatabaseContext : DbContext
     {

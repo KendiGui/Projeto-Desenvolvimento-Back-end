@@ -11,7 +11,6 @@ namespace Infrastructure.Mappings
             builder.ToTable(nameof(Usuario));
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).UseIdentityColumn();
-            builder.Ignore(x => x.guid);
 
             builder.Property(u => u.Nome).IsRequired();
             builder.Property(u => u.Email).IsRequired();
@@ -21,11 +20,6 @@ namespace Infrastructure.Mappings
             builder.Property(u => u.Ativo).HasDefaultValue(true);
             builder.Property(u => u.CreatedAt);
             builder.Property(u => u.LastUpdatedAt);
-
-            builder.HasMany<MovimentoEstoque>()
-                   .WithOne(me => me.Usuario)
-                   .HasForeignKey(me => me.UsuarioId)
-                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

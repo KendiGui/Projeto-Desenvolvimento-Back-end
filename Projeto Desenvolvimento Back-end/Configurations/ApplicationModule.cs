@@ -1,4 +1,4 @@
-﻿using Infrastructure.DatabaseContext;
+﻿using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Projeto_Desenvolvimento_Back_end.Configurations

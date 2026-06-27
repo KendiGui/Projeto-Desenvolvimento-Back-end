@@ -13,9 +13,4 @@ namespace Domain.Entities
         public virtual ICollection<ItemPedido> Itens { get; set; } = new List<ItemPedido>();
         public virtual Pagamento Pagamento { get; set; }
     }
-
-    public enum CanalPedido
-    {
-
-    }
 }
