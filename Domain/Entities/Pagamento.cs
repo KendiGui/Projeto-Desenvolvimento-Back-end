@@ -1,9 +1,11 @@
+using Domain.Enums;
+
 namespace Domain.Entities
 {
     public class Pagamento : BaseEntity
     {
         public long PedidoId { get; set; }
-        public string Status { get; set; } // PENDENTE, APROVADO, RECUSADO, ERRO
+        public StatusPagamentoEnum Status { get; set; }
         public string FormaPagamento { get; set; }
         public string GatewayTransactionId { get; set; }
         public string PayloadRequest { get; set; }
