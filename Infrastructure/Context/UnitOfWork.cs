@@ -1,14 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using Core.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Core.Data
+namespace Infrastructure.Context
 {
-    public class UnitOfWork(DbContext context) : IUnitOfWork
+    public class UnitOfWork(DatabaseContext context) : IUnitOfWork
     {
-        private readonly DbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly DatabaseContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private IDbContextTransaction? _transaction;
-        private Dictionary<string, object>? _repositories;
-
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
