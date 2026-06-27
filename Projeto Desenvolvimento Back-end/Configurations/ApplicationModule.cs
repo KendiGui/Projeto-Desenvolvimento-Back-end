@@ -1,6 +1,5 @@
-﻿using Infrastructure.Context;
+﻿using Infrastructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace Projeto_Desenvolvimento_Back_end.Configurations
 {
@@ -26,7 +25,7 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
         public static void ConfigureDataContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddEntityFrameworkSqlServer()
-                .AddDbContext<Context>(options =>
+                .AddDbContext<DatabaseContext>(options =>
                 {
                     options.UseSqlServer(configuration.GetConnectionString("connection"));
                 }, ServiceLifetime.Scoped, ServiceLifetime.Scoped

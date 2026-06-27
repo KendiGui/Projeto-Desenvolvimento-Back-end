@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Infrastructure.Context
+namespace Infrastructure.DatabaseContext
 {
-    public class Context : DbContext
+    public class DatabaseContext : DbContext
     {
-        public Context() { }
+        public DatabaseContext() { }
 
-        public Context(DbContextOptions<Context> options) : base(options) { }
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         // Cadastros base
         public DbSet<Unidade> Unidades { get; set; }
