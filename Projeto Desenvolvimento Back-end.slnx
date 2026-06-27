@@ -11,4 +11,7 @@
   <Folder Name="/4. Infraestructure/">
     <Project Path="Infrastructure/Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/5. Core/">
+    <Project Path="Core/Core.csproj" Id="dc364d02-c753-451f-8a13-ae8fffc225be" />
+  </Folder>
 </Solution>
