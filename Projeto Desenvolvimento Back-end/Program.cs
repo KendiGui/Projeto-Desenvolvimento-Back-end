@@ -1,31 +1,26 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
 using Projeto_Desenvolvimento_Back_end.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddSwaggerConfiguration();
 builder.Services.ConfigureDependecies(builder.Configuration);
 builder.Services.ConfigureDataContext(builder.Configuration);
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger().UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API Raízes do Nordeste v1");
+    options.RoutePrefix = string.Empty;
+});
 
+app.UseMiddleware<AuthenticationMiddleware>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
