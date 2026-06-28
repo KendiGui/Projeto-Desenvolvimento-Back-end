@@ -4,6 +4,11 @@
     {
         Criado,
         AguardandoPagamento,
-        Pago
+        Pago,
+        PagamentoRecusado,
+        EmPreparo,
+        Pronto,
+        Entregue,
+        Cancelado
     }
 }
