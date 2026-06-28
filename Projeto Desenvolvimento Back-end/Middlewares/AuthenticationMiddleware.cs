@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Projeto_Desenvolvimento_Back_end.Configurations
+namespace Projeto_Desenvolvimento_Back_end.Middlewares
 {
     public class AuthenticationMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
     {
@@ -23,9 +23,7 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
                 return;
             }
 
-            if (context.Request.Path.StartsWithSegments("/swagger") ||
-                context.Request.Path.StartsWithSegments("/api-docs") ||
-                context.Request.Path.StartsWithSegments("/hangfire"))
+            if (context.Request.Path.StartsWithSegments("/swagger"))
             {
                 await next(context);
                 return;
