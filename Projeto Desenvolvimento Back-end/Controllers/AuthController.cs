@@ -1,8 +1,11 @@
-using System.Security.Claims;
+using Domain.Contracts;
 using Domain.Contracts.Requests;
+using Domain.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace Projeto_Desenvolvimento_Back_end.Controllers
 {
@@ -11,19 +14,12 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
     public class AuthController(IAuthService authService, ILogger<AuthController> logger) : ControllerBase
     {
 
-        /// <summary>
-        /// Registra um novo usuário no sistema
-        /// </summary>
-        /// <param name="request">Dados do novo usuário</param>
-        /// <returns>Token JWT e dados do usuário registrado</returns>
-        /// <response code="201">Usuário registrado com sucesso</response>
-        /// <response code="400">Dados inválidos</response>
-        /// <response code="409">Email já registrado</response>
         [HttpPost("register")]
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [SwaggerOperation(Summary = "Realiza o cadastro de usuários")]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status409Conflict)]
         public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {
             try
@@ -35,32 +31,26 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
             catch (InvalidOperationException ex)
             {
                 logger.LogWarning("Email duplicado: {Message}", ex.Message);
-                return Conflict(new { error = "EMAIL_DUPLICADO", message = ex.Message });
+                return Conflict(new ErroResponse("EMAIL_DUPLICADO", ex.Message));
             }
             catch (ArgumentException ex)
             {
                 logger.LogWarning("Dados inválidos: {Message}", ex.Message);
-                return BadRequest(new { error = "VALIDATION_ERROR", message = ex.Message });
+                return BadRequest(new ErroResponse("ERRO_VALIDACAO", ex.Message));
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Erro ao registrar usuário");
-                return StatusCode(500, new { error = "INTERNAL_ERROR", message = "Erro ao registrar usuário" });
+                return StatusCode(500, new ErroResponse("ERRO_INTERNO", ex.Message));
             }
         }
 
-        /// <summary>
-        /// Realiza login do usuário
-        /// </summary>
-        /// <param name="request">Credenciais do usuário</param>
-        /// <returns>Token JWT e dados do usuário</returns>
-        /// <response code="200">Login realizado com sucesso</response>
-        /// <response code="400">Dados inválidos</response>
-        /// <response code="401">Credenciais inválidas</response>
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Realiza o login de um usuário e retorna o token de autorização")]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
             try
@@ -72,17 +62,17 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
             catch (ArgumentException ex)
             {
                 logger.LogWarning("Dados inválidos: {Message}", ex.Message);
-                return BadRequest(new { error = "VALIDATION_ERROR", message = ex.Message });
+                return BadRequest(new ErroResponse("ERRO_VALIDACAO", ex.Message));
             }
             catch (UnauthorizedAccessException ex)
             {
                 logger.LogWarning("Falha na autenticação: {Message}", ex.Message);
-                return Unauthorized(new { error = "UNAUTHORIZED", message = ex.Message });
+                return Unauthorized(new ErroResponse("NAO_AUTORIZADO", ex.Message));
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Erro ao fazer login");
-                return StatusCode(500, new { error = "INTERNAL_ERROR", message = "Erro ao fazer login" });
+                return StatusCode(500, new ErroResponse("ERRO_INTERNO", ex.Message));
             }
         }
 
@@ -95,9 +85,10 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         /// <response code="404">Usuário não encontrado</response>
         [HttpGet("me")]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(Summary = "Retorna os dados do usuário autenticado.")]
+        [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetMe()
         {
             try
@@ -106,7 +97,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
                 if (!long.TryParse(userIdClaim, out var userId))
                 {
                     logger.LogWarning("Falha ao extrair ID do usuário do token");
-                    return Unauthorized(new { error = "UNAUTHORIZED", message = "Token inválido" });
+                    return Unauthorized(new ErroResponse("NAO_AUTORIZADO", "Token inválido."));
                 }
 
                 var result = await authService.GetMeAsync(userId);
@@ -115,12 +106,12 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
             catch (InvalidOperationException ex)
             {
                 logger.LogWarning("Usuário não encontrado: {Message}", ex.Message);
-                return NotFound(new { error = "NOT_FOUND", message = ex.Message });
+                return NotFound(new ErroResponse("USUARIO_NAO_ENCONTRADO", ex.Message));
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Erro ao obter dados do usuário");
-                return StatusCode(500, new { error = "INTERNAL_ERROR", message = "Erro ao obter dados do usuário" });
+                return StatusCode(500, new ErroResponse("ERRO_INTERNO", ex.Message));
             }
         }
     }
