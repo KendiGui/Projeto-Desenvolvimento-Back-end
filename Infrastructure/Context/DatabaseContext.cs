@@ -27,6 +27,13 @@ namespace Infrastructure.Context
         // Autenticação
         public DbSet<Usuario> Usuarios { get; set; }
 
+        // Fidelidade
+        public DbSet<FidelidadeConta> FidelidadeContas { get; set; }
+        public DbSet<FidelidadeHistorico> FidelidadeHistoricos { get; set; }
+
+        // Auditoria
+        public DbSet<Auditoria> Auditorias { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());

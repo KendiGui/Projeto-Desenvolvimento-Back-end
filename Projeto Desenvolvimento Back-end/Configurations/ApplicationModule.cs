@@ -25,6 +25,8 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUnidadesService, UnidadesService>();
+            services.AddScoped<IFidelidadeService, FidelidadeService>();
+            services.AddScoped<IAuditoriaService, AuditoriaService>();
         }
 
         private static void ConfigureRepositories(this IServiceCollection services)
@@ -38,6 +40,8 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
             services.AddScoped<IUnidadeProdutoRepository, UnidadeProdutoRepository>();
             services.AddScoped<IUnidadeRepository, UnidadeRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IFidelidadeContaRepository, FidelidadeContaRepository>();
+            services.AddScoped<IFidelidadeHistoricoRepository, FidelidadeHistoricoRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
