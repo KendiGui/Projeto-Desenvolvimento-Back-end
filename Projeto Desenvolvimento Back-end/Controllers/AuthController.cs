@@ -16,7 +16,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Realiza o cadastro de usu�rios")]
+        [SwaggerOperation(Summary = "Realiza o cadastro de usuários")]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status409Conflict)]
@@ -29,7 +29,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Realiza o login de um usu�rio e retorna o token de autoriza��o")]
+        [SwaggerOperation(Summary = "Realiza o login de um usuário e retorna o token de autorização")]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status401Unauthorized)]
@@ -42,7 +42,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
 
         [HttpGet("me")]
         [Authorize]
-        [SwaggerOperation(Summary = "Retorna os dados do usu�rio autenticado.")]
+        [SwaggerOperation(Summary = "Retorna os dados do usuário autenticado.")]
         [ProducesResponseType(typeof(UsuarioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status404NotFound)]
