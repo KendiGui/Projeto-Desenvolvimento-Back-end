@@ -1,5 +1,6 @@
 using Infrastructure.Context;
 using Projeto_Desenvolvimento_Back_end.Configurations;
+using Projeto_Desenvolvimento_Back_end.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,5 @@
 using Core.Data;
+using Domain.Contracts.Exceptions;
 using Domain.Contracts.Requests;
 using Domain.Contracts.Responses;
 using Domain.Entities;
@@ -13,13 +14,13 @@ namespace Service.Services
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha) || string.IsNullOrWhiteSpace(request.Nome))
             {
-                throw new ArgumentException("Nome, Email e Senha são obrigatórios.");
+                throw new ArgumentException("Nome, Email e Senha sï¿½o obrigatï¿½rios.");
             }
 
             var emailExists = await usuarioRepository.EmailExistsAsync(request.Email);
             if (emailExists)
             {
-                throw new InvalidOperationException("Email já registrado.");
+                throw new BusinessException("EMAIL_DUPLICADO", "Email jÃ¡ registrado.", 409);
             }
 
             var senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
@@ -53,19 +54,19 @@ namespace Service.Services
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
             {
-                throw new ArgumentException("Email e Senha são obrigatórios.");
+                throw new ArgumentException("Email e Senha sï¿½o obrigatï¿½rios.");
             }
 
             var usuario = await usuarioRepository.GetByEmailAsync(request.Email);
             if (usuario == null || !usuario.Ativo)
             {
-                throw new UnauthorizedAccessException("Email ou senha inválidos.");
+                throw new UnauthorizedAccessException("Email ou senha invï¿½lidos.");
             }
 
             var senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash);
             if (!senhaValida)
             {
-                throw new UnauthorizedAccessException("Email ou senha inválidos.");
+                throw new UnauthorizedAccessException("Email ou senha invï¿½lidos.");
             }
 
             var token = tokenService.GenerateToken(usuario);
@@ -86,7 +87,7 @@ namespace Service.Services
             var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
             if (usuario == null)
             {
-                throw new InvalidOperationException("Usuário não encontrado.");
+                throw new NotFoundException("UsuÃ¡rio nÃ£o encontrado.");
             }
 
             return new UsuarioResponse

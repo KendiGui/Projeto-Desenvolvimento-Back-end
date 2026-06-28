@@ -1,4 +1,5 @@
-﻿using Domain.Contracts.Exceptions;
+﻿using Core.Data;
+using Domain.Contracts.Exceptions;
 using Domain.Contracts.Requests;
 using Domain.Contracts.Responses;
 using Domain.Entities;
@@ -7,7 +8,7 @@ using Service.Interfaces;
 
 namespace Service.Services
 {
-    public class UnidadesService(IUnidadeRepository unidadeRepository) : IUnidadesService
+    public class UnidadesService(IUnidadeRepository unidadeRepository, IUnitOfWork unitOfWork) : IUnidadesService
     {
         public async Task<ResultPaginado<UnidadeResponse>> ListaUnidades(int pagina = 1, int tamanhoPagina = 10)
         {
@@ -47,6 +48,7 @@ namespace Service.Services
             };
 
             await unidadeRepository.AddAsync(unidade);
+            await unitOfWork.CommitAsync();
 
             return new UnidadeResponse
             {
@@ -72,6 +74,7 @@ namespace Service.Services
             unidade.Ativa = request.Ativa;
 
             await unidadeRepository.UpdateAsync(unidade);
+            await unitOfWork.CommitAsync();
 
             return new UnidadeResponse
             {

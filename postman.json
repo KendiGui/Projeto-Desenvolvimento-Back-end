@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "Raizes Nordeste API - Fluxo de Pedidos",
+    "_postman_id": "a1b2c3d4-0001-4a00-9000-raizes000001",
+    "description": "Coleção da API Raizes Nordeste cobrindo:\n\n1. **Autenticação** - login e captura automática do token JWT.\n2. **Fluxo principal** - criar um Pedido (pagamento mock aprovado -> PAGO) e percorrer o ciclo de status (PAGO -> EM_PREPARO -> PRONTO -> ENTREGUE).\n3. **Cenários de erro** - login inválido (401) e estoque insuficiente ao criar pedido (409).\n\nUsuários e dados são os criados pelo seed (`DatabaseSeeder`). Variáveis usadas: `baseUrl`, `token`, `pedidoId`.\n\nExecute as requisições na ordem (ou rode a coleção inteira com o Collection Runner) — os scripts de teste populam `token` e `pedidoId` automaticamente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Retorna token', function () { pm.expect(json.token).to.be.a('string').and.not.empty; });",
+                  "pm.collectionVariables.set('token', json.token);",
+                  "console.log('Token salvo. Role: ' + json.role);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@raizes.com\",\n  \"senha\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Autentica o usuário Administrador (criado pelo seed) e devolve o token JWT. O perfil ADMIN pode tanto criar pedidos quanto alterar o status, por isso é usado em todo o fluxo principal."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Fluxo Principal",
+      "item": [
+        {
+          "name": "Criar Pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Pedido criado e pago', function () {",
+                  "  pm.expect(json.pedidoId).to.be.a('number');",
+                  "  pm.expect(json.status).to.eql('PAGO');",
+                  "});",
+                  "pm.collectionVariables.set('pedidoId', json.pedidoId);",
+                  "console.log('Pedido #' + json.pedidoId + ' criado com status ' + json.status + ' (total: ' + json.total + ')');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"canalPedido\": \"APP\",\n  \"formaPagamento\": \"MOCK\",\n  \"itens\": [\n    { \"produtoId\": 1, \"quantidade\": 2 },\n    { \"produtoId\": 3, \"quantidade\": 1 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Cria um pedido na unidade Recife (unidadeId 1) com Tapioca (produtoId 1) e Suco de cajá (produtoId 3). Com `formaPagamento = MOCK` e total > 0 o gateway mock aprova o pagamento, então o pedido nasce no status **PAGO**. O `pedidoId` retornado é salvo na variável da coleção."
+          }
+        },
+        {
+          "name": "Atualizar Status -> EM_PREPARO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Pedido em preparo', function () { pm.expect(pm.response.json().status).to.eql('EM_PREPARO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"novoStatus\": \"EM_PREPARO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "{{pedidoId}}", "status"]
+            },
+            "description": "Transição PAGO -> EM_PREPARO. Permitida para ADMIN, GERENTE ou COZINHA."
+          }
+        },
+        {
+          "name": "Atualizar Status -> PRONTO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Pedido pronto', function () { pm.expect(pm.response.json().status).to.eql('PRONTO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"novoStatus\": \"PRONTO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "{{pedidoId}}", "status"]
+            },
+            "description": "Transição EM_PREPARO -> PRONTO."
+          }
+        },
+        {
+          "name": "Atualizar Status -> ENTREGUE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Pedido entregue', function () { pm.expect(pm.response.json().status).to.eql('ENTREGUE'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"novoStatus\": \"ENTREGUE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "{{pedidoId}}", "status"]
+            },
+            "description": "Transição PRONTO -> ENTREGUE. Encerra o ciclo de vida do pedido."
+          }
+        },
+        {
+          "name": "Consultar Pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Status final ENTREGUE', function () { pm.expect(pm.response.json().status).to.eql('ENTREGUE'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos", "{{pedidoId}}"]
+            },
+            "description": "Consulta o pedido criado e confirma o status final após percorrer todo o fluxo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Cenários de Erro",
+      "item": [
+        {
+          "name": "Login inválido (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 Unauthorized', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Corpo de erro padronizado', function () { pm.expect(pm.response.json().erro).to.be.a('string'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@raizes.com\",\n  \"senha\": \"senha-errada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Tentativa de login com senha incorreta. Espera-se HTTP 401 com o corpo de erro padronizado (`ErroResponse`)."
+          }
+        },
+        {
+          "name": "Criar Pedido - estoque insuficiente (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409 Conflict', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Erro de estoque', function () { pm.expect(pm.response.json().erro).to.eql('ESTOQUE_INSUFICIENTE'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": 1,\n  \"canalPedido\": \"APP\",\n  \"formaPagamento\": \"MOCK\",\n  \"itens\": [\n    { \"produtoId\": 4, \"quantidade\": 5 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Tenta pedir 5 unidades do 'Bolo de macaxeira' (produtoId 4) na unidade Recife (unidadeId 1), onde o seed deixa apenas 1 unidade em estoque. Espera-se HTTP 409 com erro `ESTOQUE_INSUFICIENTE`. Requer o token (rode o Login primeiro)."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:7262",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pedidoId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

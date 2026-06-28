@@ -5,6 +5,7 @@ using Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Services;
+using Service.Gateways;
 using Core.Settings;
 
 
@@ -25,8 +26,14 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUnidadesService, UnidadesService>();
+            services.AddScoped<IProdutosService, ProdutosService>();
+            services.AddScoped<ICardapioService, CardapioService>();
+            services.AddScoped<IEstoqueService, EstoqueService>();
+            services.AddScoped<IPedidoService, PedidoService>();
+            services.AddScoped<IPagamentoService, PagamentoService>();
             services.AddScoped<IFidelidadeService, FidelidadeService>();
             services.AddScoped<IAuditoriaService, AuditoriaService>();
+            services.AddScoped<IPaymentGateway, MockPaymentGateway>();
         }
 
         private static void ConfigureRepositories(this IServiceCollection services)
@@ -42,6 +49,7 @@ namespace Projeto_Desenvolvimento_Back_end.Configurations
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IFidelidadeContaRepository, FidelidadeContaRepository>();
             services.AddScoped<IFidelidadeHistoricoRepository, FidelidadeHistoricoRepository>();
+            services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
