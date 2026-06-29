@@ -276,7 +276,6 @@ namespace Service.Services
             var pedido = await pedidoRepository.GetCompletoAsync(pedidoId);
             if (pedido is null) throw new NotFoundException("Pedido não encontrado");
 
-            // Valida a transição de status.
             if (pedido.Status == novoStatus)
                 throw new StatusPedidoInvalidoException($"O pedido já está no status {novoStatus.ToApiString()}.");
 
@@ -284,7 +283,6 @@ namespace Service.Services
                 throw new StatusPedidoInvalidoException(
                     $"Transição de {pedido.Status.ToApiString()} para {novoStatus.ToApiString()} não é permitida.");
 
-            // Valida a permissão do perfil para o status alvo.
             if (requesterRole is not (Roles.Admin or Roles.Gerente))
             {
                 var permitido = novoStatus switch
