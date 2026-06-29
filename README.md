@@ -195,7 +195,7 @@ http://localhost:5000
 O Swagger UI é servido na **raiz** da aplicação:
 
 ```text
-https://localhost:7000/swagger/index.html2
+https://localhost:7000/index.html
 ```
 
 No Swagger é possível visualizar e testar todos os endpoints, além de autenticar com o token JWT
