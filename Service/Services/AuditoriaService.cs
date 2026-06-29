@@ -26,27 +26,20 @@ namespace Service.Services
 
         public async Task<ResultPaginado<AuditoriaResponse>> ListarAsync(string? entidade, long? entidadeId, int pagina = 1, int tamanhoPagina = 10)
         {
-            var (items, total) = await auditoriaRepository.ListFiltradoAsync(entidade, entidadeId, pagina, tamanhoPagina);
+            var auditorias = await auditoriaRepository.ListFiltradoAsync(entidade, entidadeId, pagina, tamanhoPagina);
 
-            return new ResultPaginado<AuditoriaResponse>
+            return auditorias.Map(a => new AuditoriaResponse
             {
-                Items = items.Select(a => new AuditoriaResponse
-                {
-                    Id = a.Id,
-                    UsuarioId = a.UsuarioId,
-                    Acao = a.Acao,
-                    Entidade = a.Entidade,
-                    EntidadeId = a.EntidadeId,
-                    DadosAntes = a.DadosAntes,
-                    DadosDepois = a.DadosDepois,
-                    Ip = a.Ip,
-                    CreatedAt = a.CreatedAt
-                }),
-                Pagina = pagina < 1 ? 1 : pagina,
-                TamanhoPagina = tamanhoPagina < 1 ? 10 : tamanhoPagina,
-                TotalItems = total,
-                TotalPaginas = (int)Math.Ceiling(total / (double)(tamanhoPagina < 1 ? 10 : tamanhoPagina))
-            };
+                Id = a.Id,
+                UsuarioId = a.UsuarioId,
+                Acao = a.Acao,
+                Entidade = a.Entidade,
+                EntidadeId = a.EntidadeId,
+                DadosAntes = a.DadosAntes,
+                DadosDepois = a.DadosDepois,
+                Ip = a.Ip,
+                CreatedAt = a.CreatedAt
+            });
         }
     }
 }

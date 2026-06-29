@@ -1,4 +1,5 @@
 using Core.Data;
+using Domain.Contracts.Responses;
 using Domain.Entities;
 using Domain.Enums;
 
@@ -8,7 +9,7 @@ namespace Domain.Repositories
     {
         Task<Pedido?> GetCompletoAsync(long id);
 
-        Task<(IEnumerable<Pedido> Items, int Total)> ListFiltradoAsync(
+        Task<ResultPaginado<Pedido>> ListFiltradoAsync(
             long? clienteId,
             CanalPedidoEnum? canalPedido,
             StatusPedidoEnum? status,

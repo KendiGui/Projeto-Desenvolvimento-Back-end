@@ -1,14 +1,16 @@
 using Core.Data;
+using Domain.Contracts.Responses;
 using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Context;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class MovimentoEstoqueRepository(DatabaseContext context) : GenericRepository<MovimentoEstoque>(context), IMovimentoEstoqueRepository
     {
-        public async Task<IEnumerable<MovimentoEstoque>> ListFiltradoAsync(long? unidadeId, long? produtoId)
+        public async Task<ResultPaginado<MovimentoEstoque>> ListFiltradoAsync(long? unidadeId, long? produtoId, int pagina, int tamanhoPagina)
         {
             var query = _dbSet
                 .AsNoTracking()
@@ -23,7 +25,7 @@ namespace Infrastructure.Repositories
 
             return await query
                 .OrderByDescending(m => m.CreatedAt)
-            .ToListAsync();
+                .ToResultPaginadoAsync(pagina, tamanhoPagina);
         }
     }
 }

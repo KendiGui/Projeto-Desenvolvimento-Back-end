@@ -36,11 +36,11 @@ namespace Service.Services
             };
         }
 
-        public async Task<IEnumerable<FidelidadeHistoricoResponse>> GetHistorico(long clienteId)
+        public async Task<ResultPaginado<FidelidadeHistoricoResponse>> GetHistorico(long clienteId, int pagina = 1, int tamanhoPagina = 10)
         {
-            var historicos = await historicoRepository.ListByClienteAsync(clienteId);
+            var historicos = await historicoRepository.ListByClienteAsync(clienteId, pagina, tamanhoPagina);
 
-            return historicos.Select(h => new FidelidadeHistoricoResponse
+            return historicos.Map(h => new FidelidadeHistoricoResponse
             {
                 Id = h.Id,
                 Tipo = h.Tipo.ToString().ToUpperInvariant(),

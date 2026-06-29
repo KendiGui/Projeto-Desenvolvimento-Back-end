@@ -5,7 +5,7 @@ namespace Service.Interfaces
 {
     public interface ICardapioService
     {
-        Task<IEnumerable<CardapioItemResponse>> GetCardapio(long unidadeId);
+        Task<ResultPaginado<CardapioItemResponse>> GetCardapio(long unidadeId, int pagina = 1, int tamanhoPagina = 10);
         Task<CardapioItemResponse> AdicionaProduto(long unidadeId, CardapioProdutoRequest request);
         Task<CardapioItemResponse> AtualizaProduto(long unidadeId, long produtoId, CardapioProdutoRequest request);
     }

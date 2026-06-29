@@ -199,42 +199,35 @@ namespace Service.Services
 
             long? clienteFiltro = requesterRole == Roles.Cliente ? requesterId : null;
 
-            var (items, total) = await pedidoRepository.ListFiltradoAsync(clienteFiltro, canalFiltro, statusFiltro, pagina, tamanhoPagina);
+            var pedidos = await pedidoRepository.ListFiltradoAsync(clienteFiltro, canalFiltro, statusFiltro, pagina, tamanhoPagina);
 
-            return new ResultPaginado<PedidoResponse>
+            return pedidos.Map(p => new PedidoResponse
             {
-                Items = items.Select(p => new PedidoResponse
+                PedidoId = p.Id,
+                Status = p.Status.ToApiString(),
+                CanalPedido = p.CanalPedido.ToApiString(),
+                UnidadeId = p.UnidadeId,
+                ClienteId = p.ClienteId,
+                Total = p.Total,
+                CreatedAt = p.CreatedAt,
+                Pagamento = p.Pagamento is null ? null : new PagamentoResponse
                 {
-                    PedidoId = p.Id,
-                    Status = p.Status.ToApiString(),
-                    CanalPedido = p.CanalPedido.ToApiString(),
-                    UnidadeId = p.UnidadeId,
-                    ClienteId = p.ClienteId,
-                    Total = p.Total,
-                    CreatedAt = p.CreatedAt,
-                    Pagamento = p.Pagamento is null ? null : new PagamentoResponse
-                    {
-                        Id = p.Pagamento.Id,
-                        PedidoId = p.Pagamento.PedidoId,
-                        Status = p.Pagamento.Status.ToApiString(),
-                        FormaPagamento = p.Pagamento.FormaPagamento,
-                        TransactionId = p.Pagamento.GatewayTransactionId,
-                        CreatedAt = p.Pagamento.CreatedAt
-                    },
-                    Itens = p.Itens.Select(i => new ItemPedidoResponse
-                    {
-                        ProdutoId = i.ProdutoId,
-                        Nome = i.Produto?.Nome ?? string.Empty,
-                        Quantidade = i.Quantidade,
-                        PrecoUnitario = i.PrecoUnitario,
-                        Subtotal = i.Subtotal
-                    }).ToList()
-                }),
-                Pagina = pagina < 1 ? 1 : pagina,
-                TamanhoPagina = tamanhoPagina < 1 ? 10 : tamanhoPagina,
-                TotalItems = total,
-                TotalPaginas = (int)Math.Ceiling(total / (double)(tamanhoPagina < 1 ? 10 : tamanhoPagina))
-            };
+                    Id = p.Pagamento.Id,
+                    PedidoId = p.Pagamento.PedidoId,
+                    Status = p.Pagamento.Status.ToApiString(),
+                    FormaPagamento = p.Pagamento.FormaPagamento,
+                    TransactionId = p.Pagamento.GatewayTransactionId,
+                    CreatedAt = p.Pagamento.CreatedAt
+                },
+                Itens = p.Itens.Select(i => new ItemPedidoResponse
+                {
+                    ProdutoId = i.ProdutoId,
+                    Nome = i.Produto?.Nome ?? string.Empty,
+                    Quantidade = i.Quantidade,
+                    PrecoUnitario = i.PrecoUnitario,
+                    Subtotal = i.Subtotal
+                }).ToList()
+            });
         }
 
         public async Task<PedidoResponse> GetPedido(long pedidoId, long requesterId, string requesterRole)

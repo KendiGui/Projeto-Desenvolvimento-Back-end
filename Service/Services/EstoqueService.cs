@@ -12,14 +12,14 @@ namespace Service.Services
 {
     public class EstoqueService(IEstoqueRepository estoqueRepository, IMovimentoEstoqueRepository movimentoEstoqueRepository, IUnidadeRepository unidadeRepository, IProdutoRepository produtoRepository, IAuditoriaService auditoriaService, IUnitOfWork unitOfWork) : IEstoqueService
     {
-        public async Task<IEnumerable<EstoqueResponse>> GetEstoquePorUnidade(long unidadeId)
+        public async Task<ResultPaginado<EstoqueResponse>> GetEstoquePorUnidade(long unidadeId, int pagina = 1, int tamanhoPagina = 10)
         {
             var unidade = await unidadeRepository.GetByIdAsync(unidadeId);
             if (unidade is null) throw new NotFoundException("Unidade não encontrada");
 
-            var estoques = await estoqueRepository.ListByUnidadeAsync(unidadeId);
+            var estoques = await estoqueRepository.ListByUnidadeAsync(unidadeId, pagina, tamanhoPagina);
 
-            return estoques.Select(e => new EstoqueResponse
+            return estoques.Map(e => new EstoqueResponse
             {
                 EstoqueId = e.Id,
                 UnidadeId = e.UnidadeId,
@@ -123,11 +123,11 @@ namespace Service.Services
             };
         }
 
-        public async Task<IEnumerable<MovimentoEstoqueResponse>> ListaMovimentos(long? unidadeId, long? produtoId)
+        public async Task<ResultPaginado<MovimentoEstoqueResponse>> ListaMovimentos(long? unidadeId, long? produtoId, int pagina = 1, int tamanhoPagina = 10)
         {
-            var movimentos = await movimentoEstoqueRepository.ListFiltradoAsync(unidadeId, produtoId);
+            var movimentos = await movimentoEstoqueRepository.ListFiltradoAsync(unidadeId, produtoId, pagina, tamanhoPagina);
 
-            return movimentos.Select(m => new MovimentoEstoqueResponse
+            return movimentos.Map(m => new MovimentoEstoqueResponse
             {
                 Id = m.Id,
                 EstoqueId = m.EstoqueId,

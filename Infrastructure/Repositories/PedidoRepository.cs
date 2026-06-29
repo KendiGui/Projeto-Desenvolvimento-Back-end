@@ -1,8 +1,10 @@
 using Core.Data;
+using Domain.Contracts.Responses;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
 using Infrastructure.Context;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -18,16 +20,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<(IEnumerable<Pedido> Items, int Total)> ListFiltradoAsync(
+        public async Task<ResultPaginado<Pedido>> ListFiltradoAsync(
             long? clienteId,
             CanalPedidoEnum? canalPedido,
             StatusPedidoEnum? status,
             int pagina,
             int tamanhoPagina)
         {
-            if (pagina < 1) pagina = 1;
-            if (tamanhoPagina < 1) tamanhoPagina = 10;
-
             var query = _dbSet
                 .AsNoTracking()
                 .Include(p => p.Itens)
@@ -44,15 +43,9 @@ namespace Infrastructure.Repositories
             if (status.HasValue)
                 query = query.Where(p => p.Status == status.Value);
 
-            var total = await query.CountAsync();
-
-            var items = await query
+            return await query
                 .OrderByDescending(p => p.CreatedAt)
-                .Skip((pagina - 1) * tamanhoPagina)
-                .Take(tamanhoPagina)
-            .ToListAsync();
-
-            return (items, total);
+                .ToResultPaginadoAsync(pagina, tamanhoPagina);
         }
     }
 }

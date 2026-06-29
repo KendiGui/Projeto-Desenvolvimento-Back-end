@@ -1,11 +1,12 @@
 using Core.Data;
+using Domain.Contracts.Responses;
 using Domain.Entities;
 
 namespace Domain.Repositories
 {
     public interface IAuditoriaRepository : IGenericRepository<Auditoria>
     {
-        Task<(IEnumerable<Auditoria> Items, int Total)> ListFiltradoAsync(
+        Task<ResultPaginado<Auditoria>> ListFiltradoAsync(
             string? entidade,
             long? entidadeId,
             int pagina,

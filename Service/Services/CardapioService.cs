@@ -10,12 +10,12 @@ namespace Service.Services
 {
     public class CardapioService(IUnidadeRepository unidadeRepository, IProdutoRepository produtoRepository, IUnidadeProdutoRepository unidadeProdutoRepository, IUnitOfWork unitOfWork) : ICardapioService
     {
-        public async Task<IEnumerable<CardapioItemResponse>> GetCardapio(long unidadeId)
+        public async Task<ResultPaginado<CardapioItemResponse>> GetCardapio(long unidadeId, int pagina = 1, int tamanhoPagina = 10)
         {
             var unidade = await unidadeRepository.GetByIdAsync(unidadeId);
             if (unidade is null) throw new NotFoundException("Unidade não encontrada");
 
-            return await unidadeProdutoRepository.GetCardapioAsync(unidadeId);
+            return await unidadeProdutoRepository.GetCardapioAsync(unidadeId, pagina, tamanhoPagina);
         }
 
         public async Task<CardapioItemResponse> AdicionaProduto(long unidadeId, CardapioProdutoRequest request)

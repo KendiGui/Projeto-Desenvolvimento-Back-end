@@ -3,13 +3,14 @@ using Domain.Contracts.Responses;
 using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Context;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class UnidadeProdutoRepository(DatabaseContext context) : GenericRepository<UnidadeProduto>(context), IUnidadeProdutoRepository
     {
-        public async Task<IEnumerable<CardapioItemResponse>> GetCardapioAsync(long unidadeId, bool apenasDisponiveis = false)
+        public async Task<ResultPaginado<CardapioItemResponse>> GetCardapioAsync(long unidadeId, int pagina, int tamanhoPagina, bool apenasDisponiveis = false)
         {
             var query = _dbSet
                 .AsNoTracking()
@@ -30,7 +31,7 @@ namespace Infrastructure.Repositories
                     Disponivel = up.Disponivel,
                     Sazonal = up.Produto.Sazonal
                 })
-            .ToListAsync();
+                .ToResultPaginadoAsync(pagina, tamanhoPagina);
         }
 
         public async Task<UnidadeProduto?> GetByUnidadeProdutoAsync(long unidadeId, long produtoId)

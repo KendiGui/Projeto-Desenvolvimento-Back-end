@@ -34,9 +34,9 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
             [FromQuery] string? canalPedido,
             [FromQuery] string? status,
             [FromQuery] int pagina = 1,
-            [FromQuery] int limit = 10)
+            [FromQuery] int tamanhoPagina = 10)
         {
-            var result = await pedidoService.ListaPedidos(canalPedido, status, User.GetUserId(), User.GetUserRole(), pagina, limit);
+            var result = await pedidoService.ListaPedidos(canalPedido, status, User.GetUserId(), User.GetUserRole(), pagina, tamanhoPagina);
             return Ok(result);
         }
 

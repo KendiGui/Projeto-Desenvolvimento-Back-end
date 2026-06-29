@@ -25,10 +25,10 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
 
         [HttpGet("historico")]
         [SwaggerOperation(Summary = "Consulta o histórico de pontos do cliente autenticado")]
-        [ProducesResponseType(typeof(IEnumerable<FidelidadeHistoricoResponse>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetHistorico()
+        [ProducesResponseType(typeof(ResultPaginado<FidelidadeHistoricoResponse>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetHistorico([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
-            var result = await fidelidadeService.GetHistorico(User.GetUserId());
+            var result = await fidelidadeService.GetHistorico(User.GetUserId(), pagina, tamanhoPagina);
             return Ok(result);
         }
 

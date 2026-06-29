@@ -5,8 +5,8 @@ namespace Service.Interfaces
 {
     public interface IEstoqueService
     {
-        Task<IEnumerable<EstoqueResponse>> GetEstoquePorUnidade(long unidadeId);
+        Task<ResultPaginado<EstoqueResponse>> GetEstoquePorUnidade(long unidadeId, int pagina = 1, int tamanhoPagina = 10);
         Task<MovimentoEstoqueResponse> CriarMovimento(EstoqueMovimentoRequest request, long? usuarioId, string? ip);
-        Task<IEnumerable<MovimentoEstoqueResponse>> ListaMovimentos(long? unidadeId, long? produtoId);
+        Task<ResultPaginado<MovimentoEstoqueResponse>> ListaMovimentos(long? unidadeId, long? produtoId, int pagina = 1, int tamanhoPagina = 10);
     }
 }

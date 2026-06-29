@@ -14,5 +14,14 @@ namespace Domain.Contracts.Responses
 
         public bool HasPaginaAnterior => Pagina > 1;
         public bool HasProximaPagina => Pagina < TotalPaginas;
+
+        public ResultPaginado<TOut> Map<TOut>(Func<TEntity, TOut> selector) => new()
+        {
+            Items = Items.Select(selector).ToList(),
+            Pagina = Pagina,
+            TamanhoPagina = TamanhoPagina,
+            TotalItems = TotalItems,
+            TotalPaginas = TotalPaginas
+        };
     }
 }

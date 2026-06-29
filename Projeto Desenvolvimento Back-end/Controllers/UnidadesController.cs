@@ -17,7 +17,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> ListaUnidades(int pagina, int tamanhoPagina)
+        public async Task<ActionResult> ListaUnidades([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             var result = await unidadesService.ListaUnidades(pagina, tamanhoPagina);
             return Ok(result);

@@ -6,7 +6,7 @@ namespace Domain.Repositories
 {
     public interface IUnidadeProdutoRepository : IGenericRepository<UnidadeProduto>
     {
-        Task<IEnumerable<CardapioItemResponse>> GetCardapioAsync(long unidadeId, bool apenasDisponiveis = false);
+        Task<ResultPaginado<CardapioItemResponse>> GetCardapioAsync(long unidadeId, int pagina, int tamanhoPagina, bool apenasDisponiveis = false);
         Task<UnidadeProduto?> GetByUnidadeProdutoAsync(long unidadeId, long produtoId);
     }
 }
