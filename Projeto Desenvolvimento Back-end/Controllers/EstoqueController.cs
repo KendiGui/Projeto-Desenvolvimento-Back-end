@@ -18,6 +18,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Gerente},{Roles.Atendente}")]
         [SwaggerOperation(Summary = "Consulta o saldo de estoque de uma unidade")]
         [ProducesResponseType(typeof(ResultPaginado<EstoqueResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetEstoque(long unidadeId, [FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
@@ -42,6 +43,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Gerente},{Roles.Atendente}")]
         [SwaggerOperation(Summary = "Lista movimentos de estoque, com filtros por unidade e produto")]
         [ProducesResponseType(typeof(ResultPaginado<MovimentoEstoqueResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> ListaMovimentos(
             [FromQuery] long? unidadeId,
             [FromQuery] long? produtoId,

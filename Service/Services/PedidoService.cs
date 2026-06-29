@@ -201,6 +201,8 @@ namespace Service.Services
 
             var pedidos = await pedidoRepository.ListFiltradoAsync(clienteFiltro, canalFiltro, statusFiltro, pagina, tamanhoPagina);
 
+            if (!pedidos.Items.Any()) throw new EmptyListException("Nenhum pedido encontrado");
+
             return pedidos.Map(p => new PedidoResponse
             {
                 PedidoId = p.Id,

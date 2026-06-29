@@ -14,7 +14,7 @@ namespace Service.Services
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha) || string.IsNullOrWhiteSpace(request.Nome))
             {
-                throw new ArgumentException("Nome, Email e Senha s�o obrigat�rios.");
+                throw new ArgumentException("Nome, Email e Senha são obrigatórios.");
             }
 
             var emailExists = await usuarioRepository.EmailExistsAsync(request.Email);
@@ -54,19 +54,19 @@ namespace Service.Services
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
             {
-                throw new ArgumentException("Email e Senha s�o obrigat�rios.");
+                throw new ArgumentException("Email e Senha são obrigatórios.");
             }
 
             var usuario = await usuarioRepository.GetByEmailAsync(request.Email);
             if (usuario == null || !usuario.Ativo)
             {
-                throw new UnauthorizedAccessException("Email ou senha inv�lidos.");
+                throw new UnauthorizedAccessException("Email ou senha inválidos.");
             }
 
             var senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash);
             if (!senhaValida)
             {
-                throw new UnauthorizedAccessException("Email ou senha inv�lidos.");
+                throw new UnauthorizedAccessException("Email ou senha inválidos.");
             }
 
             var token = tokenService.GenerateToken(usuario);

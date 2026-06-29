@@ -15,7 +15,11 @@ namespace Service.Services
             var unidade = await unidadeRepository.GetByIdAsync(unidadeId);
             if (unidade is null) throw new NotFoundException("Unidade não encontrada");
 
-            return await unidadeProdutoRepository.GetCardapioAsync(unidadeId, pagina, tamanhoPagina);
+            var cardapio = await unidadeProdutoRepository.GetCardapioAsync(unidadeId, pagina, tamanhoPagina);
+
+            if (!cardapio.Items.Any()) throw new EmptyListException("Nenhum item de cardápio encontrado");
+
+            return cardapio;
         }
 
         public async Task<CardapioItemResponse> AdicionaProduto(long unidadeId, CardapioProdutoRequest request)

@@ -40,6 +40,8 @@ namespace Service.Services
         {
             var historicos = await historicoRepository.ListByClienteAsync(clienteId, pagina, tamanhoPagina);
 
+            if (!historicos.Items.Any()) throw new EmptyListException("Nenhum histórico de fidelidade encontrado");
+
             return historicos.Map(h => new FidelidadeHistoricoResponse
             {
                 Id = h.Id,

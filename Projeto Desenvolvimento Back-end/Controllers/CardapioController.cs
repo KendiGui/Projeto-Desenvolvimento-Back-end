@@ -16,6 +16,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [HttpGet("{unidadeId}/cardapio")]
         [SwaggerOperation(Summary = "Lista o cardápio de uma unidade")]
         [ProducesResponseType(typeof(ResultPaginado<CardapioItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetCardapio(long unidadeId, [FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {

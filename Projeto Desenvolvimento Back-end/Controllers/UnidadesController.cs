@@ -48,6 +48,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [SwaggerOperation(Summary = "Cadastra uma unidade")]
         [ProducesResponseType(typeof(UnidadeResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErroResponse), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> AtualizaUnidade([FromBody] UnidadeRequest request, long unidadeId)
         {

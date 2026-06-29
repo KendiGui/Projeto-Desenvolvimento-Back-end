@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Domain.Contracts.Exceptions;
 using Domain.Contracts.Responses;
 using Domain.Entities;
 using Domain.Repositories;
@@ -27,6 +28,8 @@ namespace Service.Services
         public async Task<ResultPaginado<AuditoriaResponse>> ListarAsync(string? entidade, long? entidadeId, int pagina = 1, int tamanhoPagina = 10)
         {
             var auditorias = await auditoriaRepository.ListFiltradoAsync(entidade, entidadeId, pagina, tamanhoPagina);
+
+            if (!auditorias.Items.Any()) throw new EmptyListException("Nenhum registro de auditoria encontrado");
 
             return auditorias.Map(a => new AuditoriaResponse
             {

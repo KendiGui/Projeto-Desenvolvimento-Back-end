@@ -25,9 +25,7 @@ namespace Projeto_Desenvolvimento_Back_end.Middlewares
             var (status, codigo, detalhes) = ex switch
             {
                 BusinessException be => (be.StatusCode, be.Codigo, be.Detalhes),
-                NotFoundException => (StatusCodes.Status404NotFound, "NOT_FOUND", (IEnumerable<ErroDetalhe>?)null),
-                EmptyListException => (StatusCodes.Status204NoContent, "SEM_CONTEUDO", null),
-                ArgumentException => (StatusCodes.Status400BadRequest, "VALIDATION_ERROR", null),
+                ArgumentException => (StatusCodes.Status400BadRequest, "VALIDATION_ERROR", (IEnumerable<ErroDetalhe>?)null),
                 UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", null),
                 _ => (StatusCodes.Status500InternalServerError, "ERRO_INTERNO", null)
             };

@@ -1,14 +1,6 @@
-﻿namespace Domain.Contracts.Exceptions
+namespace Domain.Contracts.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException(string mensagem, IEnumerable<ErroDetalhe>? detalhes = null) : BusinessException("NOT_FOUND", mensagem, 404, detalhes)
     {
-        public NotFoundException(string message)
-        : base(message)
-        {
-        }
-        public NotFoundException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
     }
 }

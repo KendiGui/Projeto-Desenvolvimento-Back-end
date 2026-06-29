@@ -19,6 +19,8 @@ namespace Service.Services
 
             var estoques = await estoqueRepository.ListByUnidadeAsync(unidadeId, pagina, tamanhoPagina);
 
+            if (!estoques.Items.Any()) throw new EmptyListException("Nenhum item de estoque encontrado");
+
             return estoques.Map(e => new EstoqueResponse
             {
                 EstoqueId = e.Id,
@@ -126,6 +128,8 @@ namespace Service.Services
         public async Task<ResultPaginado<MovimentoEstoqueResponse>> ListaMovimentos(long? unidadeId, long? produtoId, int pagina = 1, int tamanhoPagina = 10)
         {
             var movimentos = await movimentoEstoqueRepository.ListFiltradoAsync(unidadeId, produtoId, pagina, tamanhoPagina);
+
+            if (!movimentos.Items.Any()) throw new EmptyListException("Nenhum movimento de estoque encontrado");
 
             return movimentos.Map(m => new MovimentoEstoqueResponse
             {

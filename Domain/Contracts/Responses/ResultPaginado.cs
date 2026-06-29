@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Contracts.Responses
+﻿namespace Domain.Contracts.Responses
 {
     public class ResultPaginado<TEntity>
     {

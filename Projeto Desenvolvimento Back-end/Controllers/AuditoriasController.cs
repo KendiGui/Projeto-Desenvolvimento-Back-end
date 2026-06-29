@@ -15,6 +15,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Lista os registros de auditoria (ADMIN ou GERENTE). Filtros: entidade, entidadeId")]
         [ProducesResponseType(typeof(ResultPaginado<AuditoriaResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> Lista(
             [FromQuery] string? entidade,
             [FromQuery] long? entidadeId,

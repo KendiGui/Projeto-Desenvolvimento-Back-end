@@ -30,6 +30,7 @@ namespace Projeto_Desenvolvimento_Back_end.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Lista pedidos (cliente vê apenas os próprios). Filtros: canalPedido, status")]
         [ProducesResponseType(typeof(ResultPaginado<PedidoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> ListaPedidos(
             [FromQuery] string? canalPedido,
             [FromQuery] string? status,

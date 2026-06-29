@@ -1,14 +1,6 @@
-﻿namespace Domain.Contracts.Exceptions
+namespace Domain.Contracts.Exceptions
 {
-    public class EmptyListException : Exception
+    public class EmptyListException(string mensagem, IEnumerable<ErroDetalhe>? detalhes = null) : BusinessException("SEM_CONTEUDO", mensagem, 204, detalhes)
     {
-        public EmptyListException(string message)
-        : base(message)
-        {
-        }
-        public EmptyListException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
     }
 }
